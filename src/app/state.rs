@@ -1,39 +1,27 @@
-use std::{
-  error::Error,
-  fs,
-  io::{BufRead, BufReader, stdout},
-};
+use crossterm::cursor;
+use ropey::Rope;
 
-use crossterm::{execute, style::Print};
-
-pub struct Data {
-  string: Vec<String>,
+struct Buffer {
+  bufdata: Rope,
+  cursor: (u16, u16),
 }
 
-impl Data {
-  pub fn new() -> Self {
-    Data { string: Vec::new() }
+impl Buffer {
+  fn new(&mut self) -> Self {
+    Buffer {
+      bufdata: Rope::new(),
+      cursor: (0, 0),
+    }
   }
-  pub fn push(&mut self, s: String) {
-    self.string.push(s);
-  }
-  pub fn display(&self) -> String {
-    self.string.join("\n")
-  }
-}
 
-pub fn reader(data: &mut Data) -> Result<(), Box<dyn Error>> {
-  let home = std::env::var("HOME")?;
-  let path = format!("{}/txt.txt", home);
-  let file = fs::File::open(&path)?;
-  let reader = BufReader::new(file);
-  for line in reader.lines() {
-    let line = line?;
-    data.push(line);
+  fn reader(&mut self, string: &str) -> &mut Self {
+    self.bufdata = Rope::from_str(string);
+    self
   }
-  Ok(())
-}
 
-pub fn print_it(data: &Data) {
-  execute!(stdout(), Print(data.display()));
+  fn get_cursor_pos(&mut self) -> &mut Self {
+    let (col, row) = cursor::position().unwrap();
+    self.cursor = (col, row);
+    self
+  }
 }

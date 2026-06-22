@@ -68,10 +68,6 @@ fn key_pressed() -> Result<bool, Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-  let mut data = app::state::Data::new();
-  state::reader(&mut data)?;
-  state::print_it(&data);
-
   setup_terminal()?;
   loop {
     if key_pressed()? {
