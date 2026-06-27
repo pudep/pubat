@@ -1,13 +1,14 @@
+use std::io::Write;
+
 use crate::prelude::cterm::all::*;
 use crate::prelude::std::all::*;
-use crate::render::{self};
+use crate::render::buffer::lines;
 use crate::state::buffer::Buffer;
-
 pub fn run() -> Result<(), Box<dyn Error>> {
   crossterm::terminal::enable_raw_mode()?;
   let mut stdout = stdout();
-  let buffer = crate::state::buffer::init::init()?;
-  engine(&buffer, &mut stdout)?;
+  let mut buffer = crate::state::buffer::init::init()?;
+  engine(&mut buffer, &mut stdout)?;
   println!();
   crossterm::terminal::disable_raw_mode()?;
   execute!(
@@ -18,15 +19,16 @@ pub fn run() -> Result<(), Box<dyn Error>> {
   Ok(())
 }
 
-fn engine(buffer: &Buffer, stdout: &mut Stdout) -> Result<(), Box<dyn std::error::Error>> {
+fn engine(buffer: &mut Buffer, stdout: &mut Stdout) -> Result<(), Box<dyn std::error::Error>> {
   loop {
-    execute!(
+    queue!(
       stdout,
       terminal::Clear(terminal::ClearType::All),
       cursor::MoveTo(0, 0)
     )?;
-    render::buffer::lines::render_lines(&buffer.rope, stdout)?;
-    if crate::key::core::key_pressed()? {
+    lines::render_lines(&buffer.rope, stdout, buffer.cursor)?;
+    stdout.flush()?;
+    if crate::key::core::key_pressed(&mut buffer.cursor)? {
       break;
     }
   }

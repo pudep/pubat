@@ -2,7 +2,7 @@ use crate::prelude::cterm::all::*;
 use ropey::Rope;
 use std::io;
 
-pub fn render_lines(rope: &Rope, stdout: &mut impl io::Write) -> io::Result<()> {
+pub fn render_lines(rope: &Rope, stdout: &mut impl io::Write, cursor_pos: (u16, u16)) -> io::Result<()> {
   let (_, term_height) = terminal::size()?;
   let visible_lines = term_height.saturating_sub(1) as usize;
 
@@ -14,5 +14,6 @@ pub fn render_lines(rope: &Rope, stdout: &mut impl io::Write) -> io::Result<()> 
     }
     queue!(stdout, terminal::Clear(terminal::ClearType::UntilNewLine))?;
   }
-  stdout.flush()
+  queue!(stdout, cursor::MoveTo(cursor_pos.0, cursor_pos.1))?;
+  Ok(())
 }
