@@ -1,22 +1,9 @@
-use std::{error::Error, io::stdout};
-
-use crossterm::{
-  cursor,
-  event::{Event, KeyCode, KeyModifiers},
-  execute,
-  style::Print,
-};
-fn get_event_key() -> Result<Event, Box<dyn Error>> {
-  loop {
-    if let Event::Key(key_event) = crossterm::event::read()? {
-      return Ok(Event::Key(key_event));
-    }
-  }
-}
+use crate::prelude::cterm::all::*;
+use crate::prelude::std::all::*;
 pub fn key_pressed() -> Result<bool, Box<dyn Error>> {
   let mut stdout = stdout();
-  match get_event_key()? {
-    Event::Key(key) => match key.code {
+  if let Event::Key(key) = crossterm::event::read()? {
+    match key.code {
       KeyCode::Char('q') if key.modifiers == KeyModifiers::CONTROL => {
         return Ok(true);
       }
@@ -45,8 +32,7 @@ pub fn key_pressed() -> Result<bool, Box<dyn Error>> {
         execute!(stdout, Print(random_char))?;
       }
       _ => {}
-    },
-    _ => {}
+    }
   }
   Ok(false)
 }
