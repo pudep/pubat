@@ -2,6 +2,7 @@ use ropey::Rope;
 
 pub mod cursor;
 pub mod io;
+pub mod init;
 
 #[derive(Debug)]
 pub struct Buffer {
