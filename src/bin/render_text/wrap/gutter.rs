@@ -60,6 +60,7 @@ pub fn row_display(
   } else {
     // read the pop_dynamic algo to know.
     // padding + a space
+    // remeber the space must be outside the brace otherwise formatting will be affected.
     format!("{gutter}{padding} {line}\n")
   }
 }
