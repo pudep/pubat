@@ -43,6 +43,7 @@ fn pop_dynamic(padding: &str, to_replace_char_size: u16, vec_char: &[char]) -> S
 pub fn row_display(
   rope_idx: u16,
   wrap_idx: usize,
+  wrap_vec_len: usize,
   rope: &Rope,
   viewport: &mut ViewPort,
   line: &str,
@@ -57,10 +58,9 @@ pub fn row_display(
 
   if wrap_idx == 0 {
     format!("{gutter}{dynamic_number_width}{line}\n")
-  } else {
-    // read the pop_dynamic algo to know.
-    // padding + a space
-    // remeber the space must be outside the brace otherwise formatting will be affected.
+  } else if wrap_idx < (wrap_vec_len - 1) {
     format!("{gutter}{padding} {line}\n")
+  } else {
+    format!("{gutter}{padding} {line}")
   }
 }
