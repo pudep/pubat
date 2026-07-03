@@ -1,6 +1,6 @@
+use crate::app_state::ViewPort;
 use crate::prelude::normal::*;
 use crate::render::render_line::render;
-use crate::app_state::ViewPort;
 pub fn app(
   terminal: &mut DefaultTerminal,
   rope: &Rope,
@@ -10,15 +10,12 @@ pub fn app(
     terminal.draw(|frame| render(frame, rope, viewport))?;
     if let Event::Key(key) = crossterm::event::read()? {
       match key.code {
-        KeyCode::Char('q') if key.modifiers == KeyModifiers::CONTROL => {
-          break Ok(());
-        }
-
+        KeyCode::Char('q') if key.modifiers == KeyModifiers::CONTROL => break Ok(()),
         KeyCode::Up => {
-          viewport.scroll_offset += 1;
+          viewport.clamp_negative(1_usize);
         }
         KeyCode::Down => {
-          viewport.scroll_offset += 0;
+          viewport.clamp_positive(1_usize);
         }
         _ => {}
       }
