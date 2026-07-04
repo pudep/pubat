@@ -61,6 +61,6 @@ pub fn row_display(
   } else if wrap_idx < (wrap_vec_len - 1) {
     format!("{gutter}{padding} {line}\n")
   } else {
-    format!("{gutter}{padding} {line}")
+    line.to_string()
   }
 }
