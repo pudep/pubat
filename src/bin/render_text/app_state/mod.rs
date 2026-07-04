@@ -23,7 +23,7 @@ impl ViewPort {
   /// Use this for KeyCode::Down => {}
   /// It needs a max boundary to clamp at.
   pub fn clamp_positive(&mut self, add: usize) {
-    let result = self.scroll_offset.saturating_add(add).clamp(0_usize, self.max_line as usize);
+    let result = self.scroll_offset.saturating_add(add).clamp(0_usize, (self.max_line - 1) as usize);
     self.scroll_offset = result;
   }
 }
