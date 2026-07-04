@@ -14,18 +14,16 @@ pub fn smart_soft_wrap(
     .word_splitter(textwrap::WordSplitter::NoHyphenation)
     .word_separator(textwrap::WordSeparator::AsciiSpace);
 
-  let wrapped_text_vec: Vec<&str> = textwrap::wrap(content, options)
+  let wrapped_text_vec: Vec<String> = textwrap::wrap(content, options)
     .into_iter()
-    .map(|cow| match cow {
-      std::borrow::Cow::Borrowed(s) => s,
-      std::borrow::Cow::Owned(_) => unreachable!("The Cow::Owned text is unreachable! Take a look at : smart_soft_wrap()"),
-    })
+    .map(|cow| cow.into_owned())
     .collect();
 
   let wrap_vector_len = wrapped_text_vec.len();
 
   let mut content_line = String::new();
   for (wrap_idx, line) in wrapped_text_vec.into_iter().enumerate() {
+    viewport.count_row(); 
     content_line
       .push_str(&(gutter::row_display(rope_idx, wrap_idx, wrap_vector_len, rope, viewport, line)));
   }
