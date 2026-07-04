@@ -1,6 +1,9 @@
+use ratatui::layout::Rect;
+
 pub struct ViewPort {
   pub scroll_offset: usize,
   pub max_line: u32,
+  pub area: Rect,
 }
 
 impl ViewPort {
@@ -10,6 +13,7 @@ impl ViewPort {
     ViewPort {
       scroll_offset: 0_usize,
       max_line: 0,
+      area: Rect::new(0, 0, 0, 0),
     }
   }
 
@@ -23,7 +27,12 @@ impl ViewPort {
   /// Use this for KeyCode::Down => {}
   /// It needs a max boundary to clamp at.
   pub fn clamp_positive(&mut self, add: usize) {
-    let result = self.scroll_offset.saturating_add(add).clamp(0_usize, (self.max_line - 1) as usize);
+    let result = self.scroll_offset.saturating_add(add).clamp(
+      0_usize,
+      (self.max_line.saturating_sub(self.area.height as u32 / 2)) as usize,
+    );
     self.scroll_offset = result;
   }
 }
+
+impl ViewPort {}
