@@ -5,6 +5,7 @@ pub struct ViewPort {
   pub total_lines: u32,
   pub total_rows: u64,
   pub area: Rect,
+  pub top_line: usize,
 }
 
 impl ViewPort {
@@ -16,6 +17,7 @@ impl ViewPort {
       total_lines: 0,
       total_rows: 0,
       area: Rect::new(0, 0, 0, 0),
+      top_line: 1,
     }
   }
 
