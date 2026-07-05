@@ -7,24 +7,24 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort) {
   initialize_viewport::init(viewport, rope, frame);
 
   if terminal_area.height as usize >= rope.lines().len() {
-    for (rope_idx, line) in rope.lines().enumerate() {
-      let content = line.to_string();
+    for (rope_idx, rope_line) in rope.lines().enumerate() {
+      let rope_string = rope_line.to_string();
       let wrapped_content_line = smart_soft_wrap(
         rope_idx as u16,
         terminal_area.width,
-        &content,
+        &rope_string,
         rope,
         viewport,
       );
       content_memory.push_str(&wrapped_content_line);
     }
   } else {
-    for (rope_idx, line) in rope.lines().skip(viewport.scroll_offset).enumerate() {
-      let content = line.to_string();
+    for (rope_idx, rope_line) in rope.lines().skip(viewport.scroll_offset).enumerate() {
+      let rope_string = rope_line.to_string();
       let wrapped_content_line = smart_soft_wrap(
         rope_idx as u16,
         terminal_area.width,
-        &content,
+        &rope_string,
         rope,
         viewport,
       );
