@@ -6,7 +6,7 @@ description = "The Pude's choice for better file viewing than bat"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/pudep/pubat"
-keywords = ["cli", "tui", "bat", "cat", "pude", "file-viewer"]
+keywords = ["cli", "tui", "bat", "cat", "pude"]
 categories = ["command-line-utilities"]
 
 default-run = "pubat"
