@@ -1,10 +1,14 @@
+mod cmd;
 mod app;
-mod key;
-mod prelude;
-mod render;
 mod state;
+mod initialize_viewport;
+mod prelude;
+mod read;
+mod render;
+mod wrap;
+use prelude::normal::*;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  app::main::run()?;
+fn main() -> result::Result<(), Box<dyn Error>> {
+  cmd::cli()?;
   Ok(())
 }
