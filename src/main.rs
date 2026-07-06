@@ -1,10 +1,10 @@
-mod cmd;
 mod app;
-mod state;
+mod cmd;
 mod initialize_viewport;
 mod prelude;
 mod read;
 mod render;
+mod state;
 mod wrap;
 use prelude::normal::*;
 

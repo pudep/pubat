@@ -26,11 +26,12 @@ impl ViewPort {
   pub fn clamp_positive(&mut self, add: usize) {
     // let area = self.area;
 
-    // if self.scroll_offset < 
+    // if self.scroll_offset <
 
-    let result = self
-      .scroll_offset
-      .saturating_add(add).clamp(self.scroll_offset, self.total_lines.saturating_sub(1) as usize);
+    let result = self.scroll_offset.saturating_add(add).clamp(
+      self.scroll_offset,
+      self.total_lines.saturating_sub(1) as usize,
+    );
     self.scroll_offset = result;
   }
 }

@@ -1,6 +1,6 @@
 use crate::app::app;
-use crate::state::ViewPort;
 use crate::read::read;
+use crate::state::ViewPort;
 use std::error::Error;
 use std::path::PathBuf;
 

@@ -1,2 +1,2 @@
-pub mod util;
 pub mod gutter;
+pub mod util;
