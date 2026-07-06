@@ -12,8 +12,8 @@ pub fn smart_soft_wrap(terminal_width: u16, rope_string: &str) -> String {
     .collect();
 
   let mut unified_wrapped_string = String::new();
-  for (wrap_idx, line) in wrapped_text_vec.into_iter().enumerate() {
-    unified_wrapped_string.push_str(&(gutter::format_string(wrap_idx, line)));
+  for line in wrapped_text_vec.into_iter() {
+    unified_wrapped_string.push_str(&(gutter::format_string(line)));
   }
 
   unified_wrapped_string

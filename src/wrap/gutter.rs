@@ -1,3 +1,3 @@
-pub fn format_string(wrap_idx: usize, line: String) -> String {
+pub fn format_string(line: String) -> String {
   format!("{line}\n")
 }
