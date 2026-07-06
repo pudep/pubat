@@ -1,18 +1,25 @@
-// This is ai generated for this project
-
 use std::sync::LazyLock;
 
 use ratatui::style::{Color, Modifier, Style as RStyle};
 use ratatui::text::{Line, Span};
 use std::io::Cursor;
 use syntect::easy::HighlightLines;
-use syntect::highlighting::{FontStyle, Style as SynStyle, Theme, ThemeSet};
+use syntect::highlighting::{Color as SynColor, FontStyle, Style as SynStyle, Theme, ThemeSet};
 use syntect::parsing::{SyntaxReference, SyntaxSet};
 use syntect::util::LinesWithEndings;
 
-// Loaded once, reused for the lifetime of the program.
 static SYNTAX_SET: LazyLock<SyntaxSet> = LazyLock::new(SyntaxSet::load_defaults_newlines);
 static THEME: LazyLock<Theme> = LazyLock::new(load_moon_theme);
+
+// The tmTheme's global background, resolved once. Falls back to a sane
+// default if the theme somehow doesn't define one.
+static BG_COLOR: LazyLock<Color> = LazyLock::new(|| {
+  THEME
+    .settings
+    .background
+    .map(|SynColor { r, g, b, .. }| Color::Rgb(r, g, b))
+    .unwrap_or(Color::Rgb(34, 36, 54)) // tokyonight moon bg fallback
+});
 
 const MOON_THEME_BYTES: &[u8] = include_bytes!("../tokyonight_moon.tmTheme");
 
@@ -21,8 +28,12 @@ fn load_moon_theme() -> Theme {
     .expect("bundled tokyonight_moon.tmTheme should always parse")
 }
 
-/// Pick the best syntax for a file: try extension, then filename, then
-/// first-line heuristics (shebangs, XML declarations, etc.), else plain text.
+/// Public getter so the render layer can paint the pane background
+/// (e.g. via `Block::default().style(Style::default().bg(highlight::bg_color())))`.
+pub fn bg_color() -> Color {
+  *BG_COLOR
+}
+
 fn resolve_syntax<'a>(extension: &str, first_line: &str) -> &'a SyntaxReference {
   SYNTAX_SET
     .find_syntax_by_extension(extension)
@@ -30,9 +41,6 @@ fn resolve_syntax<'a>(extension: &str, first_line: &str) -> &'a SyntaxReference 
     .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text())
 }
 
-/// Highlight an entire source string, returning owned, render-ready lines.
-/// Call this once per file load/reload — not per frame or per scroll —
-/// and cache the result.
 pub fn highlight_file(source: &str, extension: &str) -> Vec<Line<'static>> {
   let first_line = source.lines().next().unwrap_or("");
   let syntax = resolve_syntax(extension, first_line);
@@ -42,9 +50,10 @@ pub fn highlight_file(source: &str, extension: &str) -> Vec<Line<'static>> {
     .map(|line| {
       let spans: Vec<Span<'static>> = match h.highlight_line(line, &SYNTAX_SET) {
         Ok(ranges) => ranges.into_iter().map(|(s, t)| to_span(s, t)).collect(),
-        // Malformed input shouldn't crash a file viewer — fall back
-        // to an unstyled span for this line.
-        Err(_) => vec![Span::raw(line.trim_end_matches(['\n', '\r']).to_string())],
+        Err(_) => vec![Span::styled(
+          line.trim_end_matches(['\n', '\r']).to_string(),
+          RStyle::default().bg(bg_color()),
+        )],
       };
       Line::from(spans)
     })
@@ -53,20 +62,19 @@ pub fn highlight_file(source: &str, extension: &str) -> Vec<Line<'static>> {
 
 fn to_span(style: SynStyle, text: &str) -> Span<'static> {
   let fg = style.foreground;
-  let mut rstyle = RStyle::default().fg(Color::Rgb(fg.r, fg.g, fg.b));
+  let mut rstyle = RStyle::default()
+    .fg(Color::Rgb(fg.r, fg.g, fg.b))
+    .bg(bg_color());
 
   if style.font_style.contains(FontStyle::BOLD) {
     rstyle = rstyle.add_modifier(Modifier::BOLD);
   }
-  if style.font_style.contains(FontStyle::ITALIC) {
-    rstyle = rstyle.add_modifier(Modifier::ITALIC);
-  }
   if style.font_style.contains(FontStyle::UNDERLINE) {
     rstyle = rstyle.add_modifier(Modifier::UNDERLINED);
   }
+  // Italics intentionally not applied — many terminals render tmTheme
+  // italics badly (or as reverse-video), so we skip Modifier::ITALIC.
 
-  // Strip the trailing newline captured by LinesWithEndings so ratatui
-  // doesn't render an embedded line break inside a single Line/Span.
   let text = text.trim_end_matches(['\n', '\r']);
   Span::styled(text.to_string(), rstyle)
 }
