@@ -22,16 +22,27 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort, file_path
 
   for (rope_idx, rope_line) in rope.lines().skip(viewport.scroll_offset).enumerate() {
     let rope_string = rope_line.to_string();
+    let rope_string = rope_string.trim_end_matches(['\n', '\r']);
+    let wrapped_text = smart_soft_wrap(chunks[1].width, rope_string);
 
-    let wrapped_text = smart_soft_wrap(chunks[1].width, &rope_string);
+    // count visual rows this rope_line expanded into
+    let visual_rows = wrapped_text.matches('\n').count().max(1);
 
     text_content.push_str(&wrapped_text);
 
+    let line_num = rope_idx + viewport.scroll_offset + 1;
     line_numbers.push_str(&format!(
       "{:>width$}\n",
-      rope_idx + viewport.scroll_offset + 1,
+      line_num,
       width = (gutter_width - 1) as usize
     ));
+    for _ in 1..visual_rows {
+      line_numbers.push_str(&format!(
+        "{:>width$}\n",
+        "",
+        width = (gutter_width - 1) as usize
+      ));
+    }
   }
 
   let ext = file_path
