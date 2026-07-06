@@ -23,11 +23,7 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort, file_path
   for (rope_idx, rope_line) in rope.lines().skip(viewport.scroll_offset).enumerate() {
     let rope_string = rope_line.to_string();
 
-    let wrapped_text = smart_soft_wrap(
-      chunks[1].width,
-      &rope_string,
-      rope,
-    );
+    let wrapped_text = smart_soft_wrap(chunks[1].width, &rope_string);
 
     text_content.push_str(&wrapped_text);
 
