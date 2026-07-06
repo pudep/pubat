@@ -1,8 +1,10 @@
 use crate::prelude::normal::*;
+use crate::render::highlight;
 use crate::wrap::util::*;
-use crate::{app_state::*, initialize_viewport};
-pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort) {
-  let mut content_memory = String::new();
+use crate::{initialize_viewport, state::*};
+use std::path::Path;
+pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort, file_path: &Path) {
+  let mut line = String::new();
   let terminal_area = frame.area();
   initialize_viewport::init(viewport, rope, frame);
 
@@ -16,7 +18,7 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort) {
         rope,
         viewport,
       );
-      content_memory.push_str(&wrapped_content_line);
+      line.push_str(&wrapped_content_line);
     }
   } else {
     for (rope_idx, rope_line) in rope.lines().skip(viewport.scroll_offset).enumerate() {
@@ -28,9 +30,16 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort) {
         rope,
         viewport,
       );
-      content_memory.push_str(&wrapped_content_line);
+      line.push_str(&wrapped_content_line);
     }
   }
 
-  frame.render_widget(Paragraph::new(content_memory), terminal_area);
+  let ext = if let Some(ext) = file_path.extension() {
+    format!("{}", ext.to_string_lossy())
+  } else {
+    "txt".to_string()
+  };
+
+  let line = highlight::highlight_file(&line, &ext);
+  frame.render_widget(Paragraph::new(line), terminal_area);
 }

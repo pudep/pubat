@@ -1,13 +1,8 @@
 use crate::prelude::normal::*;
-pub fn read() -> result::Result<state::buffer::Buffer, Box<dyn Error>> {
-  let mut buf = state::buffer::Buffer::new();
-  let path = std::env::home_dir()
-    .unwrap()
-    .join("impl")
-    .join("rust")
-    .join("pude")
-    .join("src")
-    .join("txt.txt");
-  buf.read(path)?;
+use std::path::Path;
+
+pub fn read(path: &Path) -> result::Result<crate::state::buffer::Buffer, Box<dyn Error>> {
+  let mut buf = crate::state::buffer::Buffer::new();
+  buf.read(path.to_path_buf())?;
   Ok(buf)
 }

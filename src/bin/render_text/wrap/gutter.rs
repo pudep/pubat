@@ -1,4 +1,4 @@
-use crate::app_state::ViewPort;
+use crate::state::ViewPort;
 use ropey::Rope;
 fn push_char(char: char, times: u16) -> String {
   let mut times = times;

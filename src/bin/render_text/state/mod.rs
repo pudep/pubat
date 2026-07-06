@@ -1,11 +1,7 @@
-use ratatui::layout::Rect;
-
+pub mod buffer;
 pub struct ViewPort {
   pub scroll_offset: usize,
   pub total_lines: u32,
-  pub total_rows: u64,
-  pub area: Rect,
-  pub top_line: usize,
 }
 
 impl ViewPort {
@@ -15,9 +11,6 @@ impl ViewPort {
     ViewPort {
       scroll_offset: 0_usize,
       total_lines: 0,
-      total_rows: 0,
-      area: Rect::new(0, 0, 0, 0),
-      top_line: 1,
     }
   }
 
@@ -39,11 +32,5 @@ impl ViewPort {
       .scroll_offset
       .saturating_add(add).clamp(self.scroll_offset, self.total_lines.saturating_sub(1) as usize);
     self.scroll_offset = result;
-  }
-}
-
-impl ViewPort {
-  pub fn count_row(&mut self) {
-    self.total_rows += 1;
   }
 }
