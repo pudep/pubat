@@ -52,9 +52,16 @@ pub fn render(frame: &mut Frame, rope: &Rope, viewport: &mut ViewPort, file_path
   let highlighted_text = highlight::highlight_file(&text_content, &ext);
 
   frame.render_widget(
-    Paragraph::new(line_numbers)
-      .style(ratatui::style::Style::default().fg(ratatui::style::Color::DarkGray)),
+    Paragraph::new(line_numbers).style(
+      ratatui::style::Style::default()
+        .fg(ratatui::style::Color::DarkGray)
+        .bg(highlight::bg_color()),
+    ),
     chunks[0],
   );
-  frame.render_widget(Paragraph::new(highlighted_text), chunks[1]);
+  frame.render_widget(
+    Paragraph::new(highlighted_text)
+      .style(ratatui::style::Style::default().bg(highlight::bg_color())),
+    chunks[1],
+  );
 }
