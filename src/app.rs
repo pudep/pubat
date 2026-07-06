@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::Path;
 
 use crate::prelude::normal::*;
 use crate::render::render_line::render;
@@ -8,7 +8,7 @@ pub fn app(
   terminal: &mut DefaultTerminal,
   rope: &Rope,
   viewport: &mut ViewPort,
-  path: &PathBuf,
+  path: &Path,
 ) -> std::io::Result<()> {
   loop {
     terminal.draw(|frame| render(frame, rope, viewport, path))?;
