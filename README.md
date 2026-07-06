@@ -30,7 +30,7 @@ Well I dont know that this will be what you like because `pubat` uses :
 This shell command will find you shell and append the Path variable to your shell. This is a safe independent of any shell script.
 
 ```sh
-cargo install --git https://github.com/pudep/pasgen
+cargo install --git https://github.com/pudep/pude
 
 sh -c '
   case "$(basename "$SHELL")" in
