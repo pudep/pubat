@@ -30,27 +30,5 @@ Well I dont know that this will be what you like because `pubat` uses :
 This shell command will find you shell and append the Path variable to your shell. This is a safe independent of any shell script.
 
 ```sh
-cargo install --git https://github.com/pudep/pubat
-
-sh -c '
-  case "$(basename "$SHELL")" in
-    fish)
-      rc="$HOME/.config/fish/config.fish"
-      mkdir -p "$HOME/.config/fish"
-      line="set -gx PATH \$HOME/.cargo/bin \$PATH"
-      ;;
-    zsh)
-      rc="$HOME/.zshrc"
-      line="export PATH=\"\$HOME/.cargo/bin:\$PATH\""
-      ;;
-    *)
-      rc="$HOME/.bashrc"
-      line="export PATH=\"\$HOME/.cargo/bin:\$PATH\""
-      ;;
-  esac
-
-  grep -qxF "$line" "$rc" 2>/dev/null || echo "$line" >> "$rc"
-
-  exec $SHELL
-'
+cargo install pubat
 ```
